@@ -1,36 +1,27 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import connectDB from "./config/dbConnect.js";
-import userRoutes from "./routes/userRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
+import mainRoutes from "./routes/routes.js";
 import errorHandler from "./middleware/errorHandler.js";
-import globalRoutes from "./routes/globalRoutes.js";
 
 dotenv.config();
 const app = express();
-connectDB();
-// Enable CORS for all routes
+
+// Enable CORS and JSON parsing
 app.use(cors());
-// Middleware to parse JSON
 app.use(express.json());
 
-// Global routes
-app.use("/", globalRoutes);
-// user related routes 
-app.use("/user", userRoutes);
-// admin related routes 
-app.use("/admin", adminRoutes);
+// Main Router
+app.use("/api/v1", mainRoutes);
 
 const PORT = process.env.PORT || 5000;
 
 app.get("/", (req, res) => {
-    res.send("Hello, World!");
+    res.send("Sales Dashboard API is running...");
 });
 
-// Error Handling Middleware 
+// Error Handling
 app.use(errorHandler);
-
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
