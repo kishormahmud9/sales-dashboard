@@ -70,3 +70,112 @@ export const getUserPerformance = async () => {
 
     return users;
 };
+
+// ✅ Member Specific Dashboard Stats
+export const getMemberDashboardData = async (userId) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const [
+        totalQueries,
+        converted,
+        quoteSent,
+        respondedQueries,
+        recentOpportunities,
+        pendingQuotes,
+        followupsToday,
+        weeklyActivityRaw
+    ] = await Promise.all([
+        // 1. Total Queries
+        prisma.project.count({ where: { employeeId: userId } }),
+
+        // 2. Converted (SOLD)
+        prisma.project.count({
+            where: { employeeId: userId, conversationStatus: "SOLD" }
+        }),
+
+        // 3. Quote Sent
+        prisma.project.count({
+            where: { employeeId: userId, queryStatus: "QUOTE_SENT" }
+        }),
+
+        // 4. Responded (Everything except NO_RESPONSE)
+        prisma.project.count({
+            where: {
+                employeeId: userId,
+                queryStatus: { not: "NO_RESPONSE" }
+            }
+        }),
+
+        // 5. Recent Opportunities (Last 5)
+        prisma.project.findMany({
+            where: { employeeId: userId },
+            orderBy: { createdAt: "desc" },
+            take: 5
+        }),
+
+        // 6. Pending Quotes (e.g., CONVERSATION_RUNNING or BRIEF_REPLIED)
+        prisma.project.count({
+            where: {
+                employeeId: userId,
+                queryStatus: { in: ["CONVERSATION_RUNNING", "BRIEF_REPLIED", "CUSTOM_OFFER_SENT"] }
+            }
+        }),
+
+        // 7. Follow-ups Today
+        prisma.project.count({
+            where: {
+                employeeId: userId,
+                conversationStatus: "NEED_TO_FOLLOW_UP"
+            }
+        }),
+
+        // 8. Weekly Activity
+        prisma.project.groupBy({
+            by: ["createdAt"],
+            where: {
+                employeeId: userId,
+                createdAt: { gte: sevenDaysAgo }
+            },
+            _count: { id: true }
+        })
+    ]);
+
+    // Format Weekly Activity for the graph
+    const weeklyActivity = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(d.getDate() + i);
+        const dayLabel = d.toLocaleDateString("en-US", { weekday: "short" });
+        const count = weeklyActivityRaw.filter(item => {
+            const itemDate = new Date(item.createdAt);
+            return itemDate.toDateString() === d.toDateString();
+        }).reduce((sum, item) => sum + item._count.id, 0);
+
+        weeklyActivity.push({ day: dayLabel, count });
+    }
+
+    const responseRate = totalQueries > 0
+        ? ((respondedQueries / totalQueries) * 100).toFixed(0)
+        : 0;
+
+    return {
+        stats: {
+            totalQueries,
+            converted,
+            quoteSent,
+            responseRate: `${responseRate}%`
+        },
+        counters: {
+            pendingQuotes,
+            followupsToday,
+            highValueLeads: 0 // Logic can be added later
+        },
+        weeklyActivity,
+        recentOpportunities
+    };
+};
