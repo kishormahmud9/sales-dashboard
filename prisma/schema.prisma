@@ -10,25 +10,26 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String    @id @default(uuid())
-  name              String    @db.VarChar(50)
-  email             String    @unique
+  id                String   @id @default(uuid())
+  name              String   @db.VarChar(50)
+  email             String   @unique
   password          String
-  role              Role      @default(sales_member)
+  role              Role     @default(sales_member)
   image             String?
-  status            Status    @default(active)
-  total_queries     Int       @default(0)
-  converted_queries Int       @default(0)
-  quote_sent        Int       @default(0)
-  conversion_rate   Float     @default(0)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  status            Status   @default(active)
+  total_queries     Int      @default(0)
+  converted_queries Int      @default(0)
+  quote_sent        Int      @default(0)
+  conversion_rate   Float    @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  projects          Project[] @relation("EmployeeProjects")
-  soldProjects      Project[] @relation("SoldProjects")
+  projects     Project[] @relation("EmployeeProjects")
+  soldProjects Project[] @relation("SoldProjects")
 }
 
 model Project {
@@ -40,7 +41,7 @@ model Project {
   source             Source
   serviceLine        ServiceLine
   country            String
-  quote              String             // Link type
+  quote              String // Link type
   queryStatus        QueryStatus
   followupCount      Int                @default(0)
   conversationStatus ConversationStatus

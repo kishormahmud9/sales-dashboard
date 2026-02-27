@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+import DevBuildError from "../../lib/DevBuildError.js";
 import * as authService from "./auth.service.js";
 
 // ✅ User Registration
@@ -27,10 +29,12 @@ export const refreshToken = async (req, res, next) => {
         if (!refreshToken) throw new DevBuildError("Refresh token required", 401);
 
         jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, decoded) => {
-            if (err) throw new DevBuildError("Invalid refresh token", 403);
+            if (err) {
+                return next(new DevBuildError("Invalid refresh token", 403));
+            }
 
             const accessToken = jwt.sign(
-                { id: decoded.id },
+                { id: decoded.id, email: decoded.email, role: decoded.role },
                 process.env.JWT_SECRET_TOKEN,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
