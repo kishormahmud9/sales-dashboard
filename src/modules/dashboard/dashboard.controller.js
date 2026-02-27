@@ -21,3 +21,15 @@ export const getUserPerformance = async (req, res, next) => {
         next(error);
     }
 };
+
+// ✅ GET /api/v1/dashboard/my-stats
+// Access: All authenticated users
+export const getMyDashboard = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const data = await dashboardService.getMemberDashboardData(userId);
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
