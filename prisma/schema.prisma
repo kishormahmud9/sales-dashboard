@@ -52,8 +52,8 @@ model Project {
   f03                Boolean            @default(false)
   f03_at             DateTime?
   conversationStatus ConversationStatus
-  soldById           String
-  soldBy             User               @relation("SoldProjects", fields: [soldById], references: [id])
+  soldById           String?
+  soldBy             User?              @relation("SoldProjects", fields: [soldById], references: [id])
   comment            String?
   remark             String?
   createdAt          DateTime           @default(now())

@@ -21,3 +21,10 @@ export const createInternalNotification = async (data) => {
         data
     });
 };
+
+// ✅ Delete a notification (Global)
+export const deleteNotification = async (id) => {
+    return await prisma.notification.delete({
+        where: { id }
+    });
+};

@@ -9,18 +9,18 @@ import prisma from "../config/prisma.js";
  * 2. If f02 is true and f03 is false for > 12 hours -> Notify "Send 3rd follow up"
  */
 export const initFollowupCron = () => {
-    // Run every minute for testing
-    cron.schedule("* * * * *", async () => {
+    // Run every hour
+    cron.schedule("0 * * * *", async () => {
         console.log("Running Follow-up Status Check Cron...");
         try {
-            const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+            const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
 
             // 1. Projects needing 2nd follow-up
             const projectsForF02 = await prisma.project.findMany({
                 where: {
                     f01: true,
                     f02: false,
-                    f01_at: { lt: fiveMinutesAgo },
+                    f01_at: { lt: twelveHoursAgo },
                     NOT: {
                         notifications: {
                             some: {
@@ -48,7 +48,7 @@ export const initFollowupCron = () => {
                 where: {
                     f02: true,
                     f03: false,
-                    f02_at: { lt: fiveMinutesAgo },
+                    f02_at: { lt: twelveHoursAgo },
                     NOT: {
                         notifications: {
                             some: {

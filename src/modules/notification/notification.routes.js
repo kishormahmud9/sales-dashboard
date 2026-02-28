@@ -1,5 +1,5 @@
 import express from "express";
-import { getMyNotifications, markNotificationRead } from "./notification.controller.js";
+import { getMyNotifications, markNotificationRead, deleteNotification } from "./notification.controller.js";
 import { authenticateUser } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -9,5 +9,8 @@ router.get("/", authenticateUser, getMyNotifications);
 
 // Mark as read
 router.patch("/:id/read", authenticateUser, markNotificationRead);
+
+// Delete notification
+router.delete("/:id", authenticateUser, deleteNotification);
 
 export default router;

@@ -20,3 +20,13 @@ export const markNotificationRead = async (req, res, next) => {
         next(error);
     }
 };
+// ✅ DELETE /api/v1/notifications/:id
+export const deleteNotification = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await notificationService.deleteNotification(id);
+        res.status(200).json({ message: "Notification deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};

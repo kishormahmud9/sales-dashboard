@@ -9,7 +9,7 @@ export const createProjectSchema = (data) => {
     if (!data.quote) errors.push("quote is required");
     if (!data.queryStatus) errors.push("queryStatus is required");
     if (!data.conversationStatus) errors.push("conversationStatus is required");
-    if (!data.soldById) errors.push("soldById is required");
+    // soldById is now optional
 
     // Follow-up Status (Optional but should be booleans)
     if (data.f01 !== undefined && typeof data.f01 !== "boolean") errors.push("f01 must be a boolean");
