@@ -44,6 +44,9 @@ model Project {
   quote              String // Link type
   queryStatus        QueryStatus
   followupCount      Int                @default(0)
+  f01                Boolean            @default(false)
+  f02                Boolean            @default(false)
+  f03                Boolean            @default(false)
   conversationStatus ConversationStatus
   soldById           String
   soldBy             User               @relation("SoldProjects", fields: [soldById], references: [id])
