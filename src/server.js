@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mainRoutes from "./routes/routes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import { initFollowupCron } from "./utils/followupCron.js";
 
 dotenv.config();
 const app = express();
@@ -25,5 +26,6 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    initFollowupCron();
 });
 

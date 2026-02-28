@@ -14,6 +14,11 @@ export const createProject = async (projectData) => {
         throw new DevBuildError("Employee not found", 404);
     }
 
+    // Handle initial follow-up timestamps
+    if (rest.f01) rest.f01_at = new Date();
+    if (rest.f02) rest.f02_at = new Date();
+    if (rest.f03) rest.f03_at = new Date();
+
     // Use a transaction: create project + increment query count atomically
     const [project] = await prisma.$transaction([
         prisma.project.create({
@@ -46,6 +51,12 @@ export const getProjectById = async (id) => {
 export const updateProject = async (id, updateData) => {
     const project = await prisma.project.findUnique({ where: { id } });
     if (!project) throw new DevBuildError("Project not found", 404);
+
+    // If f01/f02/f03 is being set to true and it wasn't true before, set the timestamp
+    if (updateData.f01 === true && !project.f01) updateData.f01_at = new Date();
+    if (updateData.f02 === true && !project.f02) updateData.f02_at = new Date();
+    if (updateData.f03 === true && !project.f03) updateData.f03_at = new Date();
+
     return await prisma.project.update({ where: { id }, data: updateData });
 };
 

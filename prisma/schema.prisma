@@ -28,8 +28,9 @@ model User {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  projects     Project[] @relation("EmployeeProjects")
-  soldProjects Project[] @relation("SoldProjects")
+  projects      Project[]      @relation("EmployeeProjects")
+  soldProjects  Project[]      @relation("SoldProjects")
+  notifications Notification[]
 }
 
 model Project {
@@ -45,8 +46,11 @@ model Project {
   queryStatus        QueryStatus
   followupCount      Int                @default(0)
   f01                Boolean            @default(false)
+  f01_at             DateTime?
   f02                Boolean            @default(false)
+  f02_at             DateTime?
   f03                Boolean            @default(false)
+  f03_at             DateTime?
   conversationStatus ConversationStatus
   soldById           String
   soldBy             User               @relation("SoldProjects", fields: [soldById], references: [id])
@@ -54,6 +58,25 @@ model Project {
   remark             String?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+
+  notifications Notification[]
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  projectId String?
+  project   Project?         @relation(fields: [projectId], references: [id])
+  message   String
+  type      NotificationType @default(FOLLOW_UP_REMINDER)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+enum NotificationType {
+  FOLLOW_UP_REMINDER
+  SYSTEM_ALERT
 }
 
 enum Role {
