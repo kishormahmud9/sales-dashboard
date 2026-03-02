@@ -97,6 +97,7 @@ enum ProfileName {
   ZEBRA_APP
   TURTLE_APP
   LOGIC_AI
+  NONE
 }
 
 enum Source {
@@ -105,6 +106,7 @@ enum Source {
   PROMOTED
   DIRECT_ORDER
   REFERRAL
+  NONE
 }
 
 enum ServiceLine {
@@ -117,6 +119,7 @@ enum ServiceLine {
   NOT_CLARIFIED
   N8N_AUTOMATION
   BUG_FIXING
+  NONE
 }
 
 enum QueryStatus {
@@ -130,6 +133,7 @@ enum QueryStatus {
   SPAM
   LOW_FOCUS_COUNTRY
   CONVERSATION_RUNNING
+  NONE
 }
 
 enum ConversationStatus {
@@ -139,4 +143,5 @@ enum ConversationStatus {
   NEVER_CAME
   FOUND_OTHER_DEV
   NO_NEED_TO_FOLLOW_UP
+  NONE
 }
