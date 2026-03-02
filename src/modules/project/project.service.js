@@ -19,14 +19,28 @@ export const createProject = async (projectData) => {
     if (rest.f02) rest.f02_at = new Date();
     if (rest.f03) rest.f03_at = new Date();
 
-    // Use a transaction: create project + increment query count atomically
+    // // Use a transaction: create project + increment query count atomically
+    // const [project] = await prisma.$transaction([
+    //     prisma.project.create({
+    //         data: { employeeId, ...rest }
+    //     }),
+    //     prisma.user.update({
+    //         where: { id: employeeId },
+    //         data: { total_queries: { increment: 1 } }
+    //     })
+    // ]);
     const [project] = await prisma.$transaction([
-        prisma.project.create({
-            data: { employeeId, ...rest }
-        }),
-        prisma.user.update({
-            where: { id: employeeId },
-            data: { total_queries: { increment: 1 } }
+    prisma.project.create({
+        data: {
+            ...rest,
+            employee: {
+                connect: { id: employeeId }
+            }
+        }
+    }),
+    prisma.user.update({
+        where: { id: employeeId },
+        data: { total_queries: { increment: 1 } }
         })
     ]);
 
