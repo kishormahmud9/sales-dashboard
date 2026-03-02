@@ -1,4 +1,6 @@
 import * as projectService from "./project.service.js";
+import * as userService from "../user/user.service.js";
+import DevBuildError from "../../lib/DevBuildError.js";
 
 // Roles that can assign any employee when creating a project
 // ✅ Create Project
@@ -12,6 +14,33 @@ export const createProject = async (req, res, next) => {
         const project = await projectService.createProject({
             ...req.body,
             employeeId
+        });
+
+        res.status(201).json({ message: "Project created successfully", project });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ✅ Create Project By Admin (can assign by employee name)
+export const createProjectByAdmin = async (req, res, next) => {
+    try {
+        const { employeeName, ...projectData } = req.body;
+
+        if (!employeeName) {
+            throw new DevBuildError("Employee name is required", 400);
+        }
+
+        // Look up the user by name
+        const employee = await userService.findByName(employeeName);
+
+        if (!employee) {
+            throw new DevBuildError(`Employee with name "${employeeName}" not found`, 404);
+        }
+
+        const project = await projectService.createProject({
+            ...projectData,
+            employeeId: employee.id
         });
 
         res.status(201).json({ message: "Project created successfully", project });

@@ -36,3 +36,14 @@ export const update = async (id, updateData) => {
 export const remove = async (id) => {
     return await prisma.user.delete({ where: { id } });
 };
+
+export const findByName = async (name) => {
+    return await prisma.user.findFirst({
+        where: {
+            name: {
+                equals: name,
+                mode: 'insensitive'
+            }
+        }
+    });
+};
