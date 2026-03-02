@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,64 +8,62 @@ datasource db {
 }
 
 model User {
-  id                String   @id @default(uuid())
-  name              String   @db.VarChar(50)
-  email             String   @unique
+  id                String         @id @default(uuid())
+  name              String         @db.VarChar(50)
+  email             String         @unique
   password          String
-  role              Role     @default(sales_member)
+  role              Role           @default(sales_member)
   image             String?
-  status            Status   @default(active)
-  total_queries     Int      @default(0)
-  converted_queries Int      @default(0)
-  quote_sent        Int      @default(0)
-  conversion_rate   Float    @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  projects      Project[]      @relation("EmployeeProjects")
-  soldProjects  Project[]      @relation("SoldProjects")
-  notifications Notification[]
+  status            Status         @default(active)
+  total_queries     Int            @default(0)
+  converted_queries Int            @default(0)
+  quote_sent        Int            @default(0)
+  conversion_rate   Float          @default(0)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  notifications     Notification[]
+  projects          Project[]      @relation("EmployeeProjects")
+  soldProjects      Project[]      @relation("SoldProjects")
 }
 
 model Project {
   id                 String             @id @default(uuid())
   employeeId         String
-  employee           User               @relation("EmployeeProjects", fields: [employeeId], references: [id])
   profileName        ProfileName
   clientName         String
   source             Source
   serviceLine        ServiceLine
   country            String
-  quote              String // Link type
+  quote              String
   queryStatus        QueryStatus
   followupCount      Int                @default(0)
-  f01                Boolean            @default(false)
-  f01_at             DateTime?
-  f02                Boolean            @default(false)
-  f02_at             DateTime?
-  f03                Boolean            @default(false)
-  f03_at             DateTime?
   conversationStatus ConversationStatus
   soldById           String?
-  soldBy             User?              @relation("SoldProjects", fields: [soldById], references: [id])
   comment            String?
   remark             String?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
-
-  notifications Notification[]
+  f01                Boolean            @default(false)
+  f02                Boolean            @default(false)
+  f03                Boolean            @default(false)
+  f01_at             DateTime?
+  f02_at             DateTime?
+  f03_at             DateTime?
+  notifications      Notification[]
+  employee           User               @relation("EmployeeProjects", fields: [employeeId], references: [id])
+  soldBy             User?              @relation("SoldProjects", fields: [soldById], references: [id])
 }
 
 model Notification {
   id        String           @id @default(uuid())
   userId    String
-  user      User             @relation(fields: [userId], references: [id])
   projectId String?
-  project   Project?         @relation(fields: [projectId], references: [id])
   message   String
   type      NotificationType @default(FOLLOW_UP_REMINDER)
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
+  project   Project?         @relation(fields: [projectId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
 }
 
 enum NotificationType {
