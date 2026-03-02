@@ -34,30 +34,30 @@ model User {
 }
 
 model Project {
-  id                 String             @id @default(uuid())
+  id                 String              @id @default(uuid())
   employeeId         String
-  employee           User               @relation("EmployeeProjects", fields: [employeeId], references: [id])
-  profileName        ProfileName
-  clientName         String
-  source             Source
-  serviceLine        ServiceLine
-  country            String
-  quote              String // Link type
-  queryStatus        QueryStatus
-  followupCount      Int                @default(0)
-  f01                Boolean            @default(false)
+  employee           User                @relation("EmployeeProjects", fields: [employeeId], references: [id])
+  profileName        ProfileName?
+  clientName         String?
+  source             Source?
+  serviceLine        ServiceLine?
+  country            String?
+  quote              String? // Link type
+  queryStatus        QueryStatus?
+  followupCount      Int                 @default(0)
+  f01                Boolean             @default(false)
   f01_at             DateTime?
-  f02                Boolean            @default(false)
+  f02                Boolean             @default(false)
   f02_at             DateTime?
-  f03                Boolean            @default(false)
+  f03                Boolean             @default(false)
   f03_at             DateTime?
-  conversationStatus ConversationStatus
+  conversationStatus ConversationStatus?
   soldById           String?
-  soldBy             User?              @relation("SoldProjects", fields: [soldById], references: [id])
+  soldBy             User?               @relation("SoldProjects", fields: [soldById], references: [id])
   comment            String?
   remark             String?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 
   notifications Notification[]
 }
@@ -105,6 +105,7 @@ enum ProfileName {
   ZEBRA_APP
   TURTLE_APP
   LOGIC_AI
+  NONE
 }
 
 enum Source {
@@ -113,6 +114,7 @@ enum Source {
   PROMOTED
   DIRECT_ORDER
   REFERRAL
+  NONE
 }
 
 enum ServiceLine {
@@ -125,6 +127,7 @@ enum ServiceLine {
   NOT_CLARIFIED
   N8N_AUTOMATION
   BUG_FIXING
+  NONE
 }
 
 enum QueryStatus {
@@ -138,6 +141,7 @@ enum QueryStatus {
   SPAM
   LOW_FOCUS_COUNTRY
   CONVERSATION_RUNNING
+  NONE
 }
 
 enum ConversationStatus {
@@ -147,4 +151,5 @@ enum ConversationStatus {
   NEVER_CAME
   FOUND_OTHER_DEV
   NO_NEED_TO_FOLLOW_UP
+  NONE
 }

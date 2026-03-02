@@ -6,8 +6,8 @@ export const createProject = async (req, res, next) => {
     try {
         const requestingUser = req.user;
 
-        // Allow any employeeId from body, defaulting to req.user.id
-        const employeeId = req.body.employeeId || requestingUser.id;
+        // Automatically use the logged-in user's ID as employeeId
+        const employeeId = requestingUser.id;
 
         const project = await projectService.createProject({
             ...req.body,
