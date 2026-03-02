@@ -14,7 +14,7 @@ router.post("/", authenticateUser, validate(createProjectSchema), createProject)
 
 
 // For sales_admin
-router.post("/admin", authenticateUser, validate(createProjectSchema), createProjectByAdmin);
+router.post("/admin", authenticateUser, canDeleteProject, validate(createProjectSchema), createProjectByAdmin);
 
 
 router.put("/:id", authenticateUser, updateProject);              // All authenticated users
