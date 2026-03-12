@@ -5,6 +5,7 @@ import projectRoutes from "../modules/project/project.routes.js";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes.js";
 import performanceRoutes from "../modules/performance/performance.routes.js";
 import notificationRoutes from "../modules/notification/notification.routes.js";
+import changePasswordRoutes from "../modules/change_password/change_password.routes.js";
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use("/projects", projectRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/performance", performanceRoutes);
 router.use("/notifications", notificationRoutes);
+router.use("/change-password", changePasswordRoutes);
 
 export default router;
