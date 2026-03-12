@@ -46,3 +46,34 @@ export const refreshToken = async (req, res, next) => {
         next(error);
     }
 };
+
+// ✅ Forgot Password - Step 1: Request OTP
+export const forgotPassword = async (req, res, next) => {
+    try {
+        await authService.forgotPassword(req.body.email);
+        res.status(200).json({ message: "OTP sent to your email" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ✅ Forgot Password - Step 2: Verify OTP
+export const verifyOtp = async (req, res, next) => {
+    try {
+        const result = await authService.verifyOtp(req.body.email, req.body.otp);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ✅ Forgot Password - Step 3: Reset Password
+export const resetPassword = async (req, res, next) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        await authService.resetPassword(email, otp, newPassword);
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        next(error);
+    }
+};
