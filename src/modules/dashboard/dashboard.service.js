@@ -65,7 +65,8 @@ export const getMemberDashboardData = async (userId) => {
         quoteSent,
         respondedQueries,
         recentOpportunities,
-        pendingQuotes,
+        potentialClients,
+        highValueLeads,
         followupsToday,
         weeklyActivityRaw
     ] = await Promise.all([
@@ -97,15 +98,23 @@ export const getMemberDashboardData = async (userId) => {
             take: 5
         }),
 
-        // 6. Pending Quotes (e.g., CONVERSATION_RUNNING or BRIEF_REPLIED)
+        // 6. Potential Clients (Projects where a quote has been sent)
         prisma.project.count({
             where: {
                 employeeId: userId,
-                queryStatus: { in: ["CONVERSATION_RUNNING", "BRIEF_REPLIED", "CUSTOM_OFFER_SENT"] }
+                queryStatus: "QUOTE_SENT"
             }
         }),
 
-        // 7. Follow-ups Today
+        // 7. High Value Leads (Custom Offer Sent)
+        prisma.project.count({
+            where: {
+                employeeId: userId,
+                queryStatus: { in: ["CUSTOM_OFFER_SENT", "BRIEF_CUSTOM_OFFER_SENT"] }
+            }
+        }),
+
+        // 8. Follow-ups Today
         prisma.project.count({
             where: {
                 employeeId: userId,
@@ -113,7 +122,7 @@ export const getMemberDashboardData = async (userId) => {
             }
         }),
 
-        // 8. Weekly Activity
+        // 9. Weekly Activity
         prisma.project.groupBy({
             by: ["createdAt"],
             where: {
@@ -150,9 +159,9 @@ export const getMemberDashboardData = async (userId) => {
             responseRate: `${responseRate}%`
         },
         counters: {
-            pendingQuotes,
+            potentialClients,
             followupsToday,
-            highValueLeads: 0 // Logic can be added later
+            highValueLeads
         },
         weeklyActivity,
         recentOpportunities
