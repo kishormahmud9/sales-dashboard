@@ -100,6 +100,11 @@ export const updateProject = async (id, updateData, requestingUser) => {
                 throw new DevBuildError(`Follow-up ${index + 1} cannot be changed once marked as done`, 403);
             }
         });
+
+        // 5. Prevent changing conversationStatus if it's already "SOLD"
+        if (updateData.conversationStatus !== undefined && project.conversationStatus === "SOLD" && updateData.conversationStatus !== "SOLD") {
+            throw new DevBuildError("Conversation status cannot be changed once 'SOLD' is selected", 403);
+        }
     }
 
     // If f01/f02/f03 is being set to true and it wasn't true before, set the timestamp
