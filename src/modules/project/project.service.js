@@ -93,12 +93,21 @@ export const updateProject = async (id, updateData, requestingUser) => {
         if (updateData.queryStatus !== undefined && project.queryStatus === "QUOTE_SENT" && updateData.queryStatus !== "QUOTE_SENT") {
             throw new DevBuildError("Status cannot be changed once 'quote sent' is selected", 403);
         }
+
+        // 4. Prevent changing f01, f02, f03 if they are already true
+        ["f01", "f02", "f03"].forEach((field, index) => {
+            if (updateData[field] !== undefined && project[field] === true && updateData[field] !== true) {
+                throw new DevBuildError(`Follow-up ${index + 1} cannot be changed once marked as done`, 403);
+            }
+        });
     }
 
     // If f01/f02/f03 is being set to true and it wasn't true before, set the timestamp
-    if (updateData.f01 === true && !project.f01) updateData.f01_at = new Date();
-    if (updateData.f02 === true && !project.f02) updateData.f02_at = new Date();
-    if (updateData.f03 === true && !project.f03) updateData.f03_at = new Date();
+    ["f01", "f02", "f03"].forEach(field => {
+        if (updateData[field] === true && !project[field]) {
+            updateData[`${field}_at`] = new Date();
+        }
+    });
 
     return await prisma.project.update({ where: { id }, data: updateData });
 };
