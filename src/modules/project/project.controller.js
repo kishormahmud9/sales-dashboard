@@ -72,7 +72,7 @@ export const getProjectById = async (req, res, next) => {
 // ✅ Update Project (All authenticated users)
 export const updateProject = async (req, res, next) => {
     try {
-        const project = await projectService.updateProject(req.params.id, req.body);
+        const project = await projectService.updateProject(req.params.id, req.body, req.user);
         res.status(200).json({ message: "Project updated successfully", project });
     } catch (error) {
         next(error);
